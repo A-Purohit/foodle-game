@@ -41,6 +41,7 @@ class FoodleGame {
         
         // Show stats modal if game is already completed
         if (this.gameOver) {
+            this.disableKeyboard();
             setTimeout(() => {
                 this.updateStatsDisplay();
                 this.showModal('stats-modal');
@@ -313,7 +314,11 @@ class FoodleGame {
     }
     
     handleKeyPress(key) {
-        if (this.gameOver) return;
+        // Completely block input if game is over
+        if (this.gameOver) {
+            this.showToast('Game completed! Come back tomorrow for a new Foodle.');
+            return;
+        }
         
         if (key === 'ENTER') {
             this.submitGuess();
@@ -454,6 +459,9 @@ class FoodleGame {
         this.gameWon = won;
         this.saveTodaysGame();
         
+        // Disable all keyboard buttons
+        this.disableKeyboard();
+        
         setTimeout(() => {
             this.updateStats(won);
             if (won) {
@@ -468,6 +476,24 @@ class FoodleGame {
                 this.showModal('stats-modal');
             }, 2000);
         }, 600);
+    }
+    
+    disableKeyboard() {
+        // Add disabled class to all keyboard buttons
+        document.querySelectorAll('.key').forEach(key => {
+            key.classList.add('disabled');
+            key.style.opacity = '0.5';
+            key.style.cursor = 'not-allowed';
+        });
+    }
+    
+    enableKeyboard() {
+        // Remove disabled class from all keyboard buttons
+        document.querySelectorAll('.key').forEach(key => {
+            key.classList.remove('disabled');
+            key.style.opacity = '1';
+            key.style.cursor = 'pointer';
+        });
     }
     
     showToast(message, duration = 3000) {

@@ -259,6 +259,16 @@ body {
     font-size: 12px;
 }
 
+.key.disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+.key.disabled:hover {
+    background-color: #d3d6da !important;
+}
+
 /* Toaster */
 .toaster {
     position: absolute;
