@@ -17,7 +17,7 @@ const KEYBOARD_LAYOUT = [
 
 class FoodleGame {
     constructor() {
-        this.targetWord = this.getRandomWord();
+        this.initializeDaily();
         this.currentRow = 0;
         this.currentCol = 0;
         this.gameOver = false;
@@ -32,11 +32,80 @@ class FoodleGame {
         this.bindEvents();
         this.updateCountdown();
         
+        // Show stats modal if game is already completed
+        if (this.gameOver) {
+            setTimeout(() => {
+                this.updateStatsDisplay();
+                this.showModal('stats-modal');
+            }, 1000);
+        }
+        
         console.log('Target word:', this.targetWord); // For testing
+        console.log('Game number:', this.gameNumber); // For testing
     }
     
-    getRandomWord() {
-        return FOOD_WORDS[Math.floor(Math.random() * FOOD_WORDS.length)];
+    initializeDaily() {
+        // Get today's date in UTC to ensure consistency across timezones
+        const today = new Date();
+        const utcDate = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+        
+        // Calculate days since a fixed start date (January 1, 2024)
+        const startDate = new Date(2024, 0, 1); // January 1, 2024
+        const timeDiff = utcDate.getTime() - startDate.getTime();
+        this.gameNumber = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+        
+        // Check if we already have today's game state saved
+        const savedGameState = this.loadTodaysGame();
+        if (savedGameState && savedGameState.gameNumber === this.gameNumber) {
+            // Continue existing game
+            this.targetWord = savedGameState.targetWord;
+            this.currentRow = savedGameState.currentRow;
+            this.currentCol = savedGameState.currentCol;
+            this.gameOver = savedGameState.gameOver;
+            this.gameWon = savedGameState.gameWon;
+            this.guesses = savedGameState.guesses || [];
+            this.keyboardState = savedGameState.keyboardState || {};
+        } else {
+            // Start new game for today
+            this.targetWord = this.getDailyWord();
+            this.gameOver = false;
+            this.gameWon = false;
+            this.guesses = [];
+            this.keyboardState = {};
+        }
+    }
+    
+    getDailyWord() {
+        // Use game number as seed for consistent daily word
+        const wordIndex = this.gameNumber % FOOD_WORDS.length;
+        return FOOD_WORDS[wordIndex];
+    }
+    
+    loadTodaysGame() {
+        const savedGame = localStorage.getItem('foodle-daily-game');
+        if (savedGame) {
+            try {
+                return JSON.parse(savedGame);
+            } catch (e) {
+                return null;
+            }
+        }
+        return null;
+    }
+    
+    saveTodaysGame() {
+        const gameState = {
+            gameNumber: this.gameNumber,
+            targetWord: this.targetWord,
+            currentRow: this.currentRow,
+            currentCol: this.currentCol,
+            gameOver: this.gameOver,
+            gameWon: this.gameWon,
+            guesses: this.guesses,
+            keyboardState: this.keyboardState,
+            grid: this.grid
+        };
+        localStorage.setItem('foodle-daily-game', JSON.stringify(gameState));
     }
     
     initializeGrid() {
@@ -46,7 +115,7 @@ class FoodleGame {
         for (let row = 0; row < 6; row++) {
             const rowElement = document.createElement('div');
             rowElement.className = 'row';
-            this.grid[row] = [];
+            if (!this.grid[row]) this.grid[row] = [];
             
             for (let col = 0; col < 5; col++) {
                 const tile = document.createElement('div');
@@ -54,11 +123,83 @@ class FoodleGame {
                 tile.setAttribute('data-state', 'empty');
                 tile.id = `tile-${row}-${col}`;
                 rowElement.appendChild(tile);
-                this.grid[row][col] = '';
+                if (!this.grid[row][col]) this.grid[row][col] = '';
             }
             
             boardElement.appendChild(rowElement);
         }
+        
+        // Restore saved game state if continuing a game
+        this.restoreGameState();
+    }
+    
+    restoreGameState() {
+        const savedGameState = this.loadTodaysGame();
+        if (savedGameState && savedGameState.gameNumber === this.gameNumber && savedGameState.grid) {
+            // Restore grid content and states
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 5; col++) {
+                    if (savedGameState.grid[row] && savedGameState.grid[row][col]) {
+                        const tile = document.getElementById(`tile-${row}-${col}`);
+                        const letter = savedGameState.grid[row][col];
+                        tile.textContent = letter;
+                        this.grid[row][col] = letter;
+                        
+                        // Set tile state based on whether this row was submitted
+                        if (row < this.currentRow) {
+                            // This row was already submitted, check the guess result
+                            const guess = savedGameState.grid[row].join('');
+                            const result = this.calculateGuessResult(guess, this.targetWord);
+                            tile.setAttribute('data-state', result[col]);
+                        } else if (row === this.currentRow && col < this.currentCol) {
+                            // Current row, letters that have been typed
+                            tile.setAttribute('data-state', 'tbd');
+                        }
+                    }
+                }
+            }
+            
+            // Restore keyboard states
+            for (const [letter, state] of Object.entries(this.keyboardState)) {
+                const key = document.querySelector(`[data-key="${letter}"]`);
+                if (key) {
+                    key.setAttribute('data-state', state);
+                }
+            }
+        }
+    }
+    
+    calculateGuessResult(guess, target) {
+        const targetArray = target.split('');
+        const guessArray = guess.split('');
+        const result = new Array(5);
+        const targetUsed = new Array(5).fill(false);
+        
+        // First pass: mark correct letters
+        for (let i = 0; i < 5; i++) {
+            if (guessArray[i] === targetArray[i]) {
+                result[i] = 'correct';
+                targetUsed[i] = true;
+            }
+        }
+        
+        // Second pass: mark present letters
+        for (let i = 0; i < 5; i++) {
+            if (result[i] !== 'correct') {
+                const targetIndex = targetArray.findIndex((letter, index) => 
+                    letter === guessArray[i] && !targetUsed[index]
+                );
+                
+                if (targetIndex !== -1) {
+                    result[i] = 'present';
+                    targetUsed[targetIndex] = true;
+                } else {
+                    result[i] = 'absent';
+                }
+            }
+        }
+        
+        return result;
     }
     
     initializeKeyboard() {
@@ -163,6 +304,7 @@ class FoodleGame {
             }, 100);
             
             this.currentCol++;
+            this.saveTodaysGame();
         }
     }
     
@@ -173,6 +315,7 @@ class FoodleGame {
             const tile = document.getElementById(`tile-${this.currentRow}-${this.currentCol}`);
             tile.textContent = '';
             tile.setAttribute('data-state', 'empty');
+            this.saveTodaysGame();
         }
     }
     
@@ -200,6 +343,7 @@ class FoodleGame {
         } else {
             this.currentRow++;
             this.currentCol = 0;
+            this.saveTodaysGame();
         }
     }
     
@@ -269,6 +413,7 @@ class FoodleGame {
     endGame(won) {
         this.gameOver = true;
         this.gameWon = won;
+        this.saveTodaysGame();
         
         setTimeout(() => {
             this.updateStats(won);
@@ -389,7 +534,7 @@ class FoodleGame {
         if (!this.gameOver) return;
         
         const guessCount = this.gameWon ? this.currentRow + 1 : 'X';
-        let result = `Foodle ${guessCount}/6\n\n`;
+        let result = `Foodle ${this.gameNumber} ${guessCount}/6\n\n`;
         
         this.guesses.forEach((guess, index) => {
             const targetArray = this.targetWord.split('');
