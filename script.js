@@ -467,12 +467,9 @@ class FoodleGame {
         
         const guess = this.grid[this.currentRow].join('');
         
-        // Show loading state while validating
-        this.showToast('Checking word...');
-        
         const isValid = await this.isValidWord(guess);
         if (!isValid) {
-            this.showToast('Not in word list');
+            this.showToast('Please enter a valid English word');
             this.shakeRow();
             return;
         }
