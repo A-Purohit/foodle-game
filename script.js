@@ -1,20 +1,19 @@
-// Food-related words (strictly 5 letters, no plurals, singular only)
+// Food-related words (strictly 5 letters, no plurals, no drinks/beverages)
 const FOOD_WORDS = [
     'APPLE', 'BACON', 'BREAD', 'BROTH', 'CANDY', 'CREAM', 'CURRY', 'DONUT',
     'FLOUR', 'GRAPE', 'HONEY', 'LEMON', 'MANGO', 'OLIVE', 'ONION', 'PASTA',
     'PEACH', 'PIZZA', 'SALAD', 'SAUCE', 'SPICE', 'STEAK', 'SUGAR', 'TOAST',
-    'WATER', 'WHEAT', 'BERRY', 'FRESH', 'FRIED', 'GRILL', 'JUICE', 'MELON',
-    'PANKO', 'RANCH', 'ROAST', 'SALTY', 'SWEET', 'TANGY', 'YEAST', 'ZESTY',
-    'BAGEL', 'CHARD', 'CHILI', 'CRUST', 'DRIED', 'GRAIN', 'GRAVY', 'GREEN',
-    'MAPLE', 'MINTY', 'NUTTY', 'PLATE', 'SERVE', 'SMOKE', 'SNACK', 'SPICY',
-    'STEAM', 'STOCK', 'SYRUP', 'TABLE', 'TASTE', 'TREAT', 'WHISK', 'BLEND',
-    'BRINE', 'BROIL', 'BROWN', 'CAKEY', 'CRISP', 'CRUMB', 'DICED', 'DRINK',
-    'FEAST', 'FIBER', 'FLAKY', 'GLAZE', 'LEAFY', 'LIGHT', 'MOIST', 'PLAIN',
-    'PUREE', 'SHARP', 'SLICE', 'SOLID', 'SPLIT', 'THICK', 'TOUGH', 'TWIST',
-    'VODKA', 'WAFER', 'WHOLE', 'COCOA', 'DOUGH', 'GUMBO', 'MATZO', 'MOCHI',
-    'NACHO', 'SCONE', 'THYME', 'BASIL', 'CUMIN', 'ICING', 'LATTE', 'MOCHA',
-    'PESTO', 'QUESO', 'SALSA', 'UMAMI', 'CHURN', 'CRACK', 'CRIMP', 'CRUSH',
-    'GRIND', 'KNEAD', 'MINCE', 'BRAZE', 'SAUTE', 'SIEVE', 'STUFF'
+    'WHEAT', 'BERRY', 'FRESH', 'FRIED', 'GRILL', 'MELON', 'PANKO', 'RANCH',
+    'ROAST', 'SALTY', 'SWEET', 'TANGY', 'YEAST', 'ZESTY', 'BAGEL', 'CHARD',
+    'CHILI', 'CRUST', 'DRIED', 'GRAIN', 'GRAVY', 'GREEN', 'MAPLE', 'MINTY',
+    'NUTTY', 'PLATE', 'SERVE', 'SMOKE', 'SNACK', 'SPICY', 'STEAM', 'STOCK',
+    'SYRUP', 'TABLE', 'TASTE', 'TREAT', 'WHISK', 'BLEND', 'BRINE', 'BROIL',
+    'BROWN', 'CAKEY', 'CRISP', 'CRUMB', 'DICED', 'FEAST', 'FIBER', 'FLAKY',
+    'GLAZE', 'LEAFY', 'LIGHT', 'MOIST', 'PLAIN', 'PUREE', 'SHARP', 'SLICE',
+    'SOLID', 'SPLIT', 'THICK', 'TOUGH', 'TWIST', 'WAFER', 'WHOLE', 'DOUGH',
+    'GUMBO', 'MATZO', 'MOCHI', 'NACHO', 'SCONE', 'THYME', 'BASIL', 'CUMIN',
+    'ICING', 'PESTO', 'QUESO', 'SALSA', 'UMAMI', 'CHURN', 'CRACK', 'CRIMP',
+    'CRUSH', 'GRIND', 'KNEAD', 'MINCE', 'BRAZE', 'SAUTE', 'SIEVE', 'STUFF'
 ];
 
 const KEYBOARD_LAYOUT = [
