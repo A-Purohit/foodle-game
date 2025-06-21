@@ -32,6 +32,7 @@ class FoodleGame {
         this.grid = [];
         this.keyboardState = {};
         this.guesses = [];
+        this.lastToastTime = 0;
         
         this.initializeGrid();
         this.initializeKeyboard();
@@ -316,7 +317,12 @@ class FoodleGame {
     handleKeyPress(key) {
         // Completely block input if game is over
         if (this.gameOver) {
-            this.showToast('Game completed! Come back tomorrow for a new Foodle.');
+            // Only show toast message once every 5 seconds to prevent spam
+            const now = Date.now();
+            if (now - this.lastToastTime > 5000) {
+                this.showToast('Game completed! Come back tomorrow for a new Foodle.');
+                this.lastToastTime = now;
+            }
             return;
         }
         
@@ -498,6 +504,10 @@ class FoodleGame {
     
     showToast(message, duration = 3000) {
         const toaster = document.getElementById('toaster');
+        
+        // Clear any existing toasts first
+        toaster.innerHTML = '';
+        
         const toast = document.createElement('div');
         toast.className = 'toast';
         toast.textContent = message;
