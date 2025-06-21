@@ -3,42 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foodle - Guess the Food!</title>
+    <title>Foodle - Food Wordle Game</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🍕 FOODLE</h1>
-            <p>Guess the food ingredient or dish!</p>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="icon-button" id="help-button" aria-label="Help">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="header-center">
+                <h1 class="title">
+                    <span class="food-emoji">🍕</span>
+                    FOODLE
+                </h1>
+            </div>
+            
+            <div class="header-right">
+                <button class="icon-button" id="stats-button" aria-label="Statistics">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16,11V3H8v6H2v12h20V11H16z M10,5h4v14h-4V5z M4,11h4v8H4V11z M20,19h-4v-6h4V19z"/>
+                    </svg>
+                </button>
+            </div>
         </header>
 
+        <!-- Game Board -->
         <div class="game-board">
-            <div class="grid" id="grid"></div>
-        </div>
-
-        <div class="keyboard" id="keyboard"></div>
-
-        <div class="stats" id="stats">
-            <div class="stat">
-                <span class="stat-value" id="games-played">0</span>
-                <span class="stat-label">Played</span>
-            </div>
-            <div class="stat">
-                <span class="stat-value" id="win-percentage">0</span>
-                <span class="stat-label">Win %</span>
-            </div>
-            <div class="stat">
-                <span class="stat-value" id="current-streak">0</span>
-                <span class="stat-label">Current Streak</span>
+            <div class="board-container">
+                <div class="board" id="board"></div>
             </div>
         </div>
 
-        <div class="modal" id="modal">
+        <!-- Keyboard -->
+        <div class="keyboard-container">
+            <div class="keyboard" id="keyboard"></div>
+        </div>
+
+        <!-- Toaster for messages -->
+        <div class="toaster" id="toaster"></div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="help-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>How to Play</h2>
+                <button class="close-button" id="close-help" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
             <div class="modal-content">
-                <h2 id="modal-title">Game Over!</h2>
-                <p id="modal-message">The word was: <strong id="correct-word"></strong></p>
-                <button id="play-again">Play Again</button>
+                <p class="modal-description">Guess the <strong>FOODLE</strong> in 6 tries.</p>
+                
+                <div class="instructions">
+                    <p>Each guess must be a valid 5-letter food word. Hit the enter button to submit.</p>
+                    <p>After each guess, the color of the tiles will change to show how close your guess was to the word.</p>
+                </div>
+
+                <div class="examples">
+                    <p><strong>Examples</strong></p>
+                    
+                    <div class="example">
+                        <div class="example-row">
+                            <div class="tile tile-correct">A</div>
+                            <div class="tile">P</div>
+                            <div class="tile">P</div>
+                            <div class="tile">L</div>
+                            <div class="tile">E</div>
+                        </div>
+                        <p>The letter <strong>A</strong> is in the word and in the correct spot.</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-row">
+                            <div class="tile">P</div>
+                            <div class="tile tile-present">I</div>
+                            <div class="tile">Z</div>
+                            <div class="tile">Z</div>
+                            <div class="tile">A</div>
+                        </div>
+                        <p>The letter <strong>I</strong> is in the word but in the wrong spot.</p>
+                    </div>
+
+                    <div class="example">
+                        <div class="example-row">
+                            <div class="tile">B</div>
+                            <div class="tile">R</div>
+                            <div class="tile tile-absent">X</div>
+                            <div class="tile">A</div>
+                            <div class="tile">D</div>
+                        </div>
+                        <p>The letter <strong>X</strong> is not in the word in any spot.</p>
+                    </div>
+                </div>
+
+                <div class="food-tips">
+                    <p><strong>💡 Food Tips:</strong></p>
+                    <ul>
+                        <li>Think ingredients: APPLE, LEMON, ONION, MANGO</li>
+                        <li>Try dishes: PIZZA, CURRY, PASTA, SALAD</li>
+                        <li>Consider spices: THYME, BASIL, CUMIN</li>
+                        <li>All words are food-related! 🍽️</li>
+                    </ul>
+                </div>
+
+                <hr>
+                <p class="new-puzzle">A new FOODLE will be available each day!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div class="modal-overlay" id="stats-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Statistics</h2>
+                <button class="close-button" id="close-stats" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="statistics">
+                    <div class="statistic">
+                        <div class="statistic-value" id="total-played">0</div>
+                        <div class="statistic-label">Played</div>
+                    </div>
+                    <div class="statistic">
+                        <div class="statistic-value" id="win-percentage">0</div>
+                        <div class="statistic-label">Win %</div>
+                    </div>
+                    <div class="statistic">
+                        <div class="statistic-value" id="current-streak">0</div>
+                        <div class="statistic-label">Current Streak</div>
+                    </div>
+                    <div class="statistic">
+                        <div class="statistic-value" id="max-streak">0</div>
+                        <div class="statistic-label">Max Streak</div>
+                    </div>
+                </div>
+
+                <h3>Guess Distribution</h3>
+                <div class="guess-distribution" id="guess-distribution">
+                    <div class="guess-row">
+                        <div class="guess-number">1</div>
+                        <div class="guess-bar">
+                            <div class="guess-bar-fill" data-guess="1"></div>
+                        </div>
+                        <div class="guess-count" id="guess-1">0</div>
+                    </div>
+                    <div class="guess-row">
+                        <div class="guess-number">2</div>
+                        <div class="guess-bar">
+                            <div class="guess-bar-fill" data-guess="2"></div>
+                        </div>
+                        <div class="guess-count" id="guess-2">0</div>
+                    </div>
+                    <div class="guess-row">
+                        <div class="guess-number">3</div>
+                        <div class="guess-bar">
+                            <div class="guess-bar-fill" data-guess="3"></div>
+                        </div>
+                        <div class="guess-count" id="guess-3">0</div>
+                    </div>
+                    <div class="guess-row">
+                        <div class="guess-number">4</div>
+                        <div class="guess-bar">
+                            <div class="guess-bar-fill" data-guess="4"></div>
+                        </div>
+                        <div class="guess-count" id="guess-4">0</div>
+                    </div>
+                    <div class="guess-row">
+                        <div class="guess-number">5</div>
+                        <div class="guess-bar">
+                            <div class="guess-bar-fill" data-guess="5"></div>
+                        </div>
+                        <div class="guess-count" id="guess-5">0</div>
+                    </div>
+                    <div class="guess-row">
+                        <div class="guess-number">6</div>
+                        <div class="guess-bar">
+                            <div class="guess-bar-fill" data-guess="6"></div>
+                        </div>
+                        <div class="guess-count" id="guess-6">0</div>
+                    </div>
+                </div>
+
+                <div class="footer" id="stats-footer">
+                    <div class="countdown">
+                        <h3>Next Foodle</h3>
+                        <div id="countdown-timer">--:--:--</div>
+                    </div>
+                    <button class="share-button" id="share-button">Share</button>
+                </div>
             </div>
         </div>
     </div>
