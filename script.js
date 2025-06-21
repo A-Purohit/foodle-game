@@ -24,7 +24,7 @@ const KEYBOARD_LAYOUT = [
 
 class FoodleGame {
     constructor() {
-        this.initializeDaily();
+        // Initialize defaults first
         this.currentRow = 0;
         this.currentCol = 0;
         this.gameOver = false;
@@ -33,6 +33,9 @@ class FoodleGame {
         this.keyboardState = {};
         this.guesses = [];
         this.hasShownCompletionMessage = false;
+        
+        // Then load daily state (which may override the defaults)
+        this.initializeDaily();
         
         this.initializeGrid();
         this.initializeKeyboard();
@@ -51,6 +54,9 @@ class FoodleGame {
         
         console.log('Target word:', this.targetWord); // For testing
         console.log('Game number:', this.gameNumber); // For testing
+        console.log('Game over:', this.gameOver); // For testing
+        console.log('Guesses:', this.guesses); // For testing
+        console.log('Current row/col:', this.currentRow, this.currentCol); // For testing
     }
     
     getTodaysDateString() {
@@ -84,17 +90,21 @@ class FoodleGame {
             this.guesses = savedGameState.guesses || [];
             this.keyboardState = savedGameState.keyboardState || {};
             
-            // Double-check if game should be over based on guesses
-            if (!this.gameOver && this.guesses.length > 0) {
-                const lastGuess = this.guesses[this.guesses.length - 1];
-                if (lastGuess === this.targetWord) {
-                    // Won the game
-                    this.gameOver = true;
-                    this.gameWon = true;
-                    this.currentRow = this.guesses.length - 1;
-                    this.currentCol = 5;
-                } else if (this.guesses.length >= 6) {
-                    // Lost the game (used all 6 attempts)
+            // Double-check if game should be over based on guesses or current position
+            if (!this.gameOver) {
+                if (this.guesses.length > 0) {
+                    const lastGuess = this.guesses[this.guesses.length - 1];
+                    if (lastGuess === this.targetWord) {
+                        // Won the game
+                        this.gameOver = true;
+                        this.gameWon = true;
+                        this.currentRow = this.guesses.length - 1;
+                        this.currentCol = 5;
+                    }
+                }
+                
+                // Check if lost (6 guesses made or current row is beyond 5)
+                if (this.guesses.length >= 6 || this.currentRow >= 6) {
                     this.gameOver = true;
                     this.gameWon = false;
                     this.currentRow = 5;
@@ -353,6 +363,18 @@ class FoodleGame {
     }
     
     addLetter(letter) {
+        // Double-check game is not over
+        if (this.gameOver) {
+            console.log('Blocking addLetter - game is over');
+            return;
+        }
+        
+        // Don't allow typing beyond row 5 or if all guesses used
+        if (this.currentRow >= 6 || this.guesses.length >= 6) {
+            console.log('Blocking addLetter - beyond limits');
+            return;
+        }
+        
         if (this.currentCol < 5) {
             this.grid[this.currentRow][this.currentCol] = letter;
             const tile = document.getElementById(`tile-${this.currentRow}-${this.currentCol}`);
