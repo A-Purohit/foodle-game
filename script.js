@@ -109,12 +109,7 @@ class FoodleGame {
             this.hideModal('help-modal');
         });
         
-        // Stats modal events
-        document.getElementById('stats-button').addEventListener('click', () => {
-            this.updateStatsDisplay();
-            this.showModal('stats-modal');
-        });
-        
+        // Stats modal events (stats button removed, but keep close functionality)
         document.getElementById('close-stats').addEventListener('click', () => {
             this.hideModal('stats-modal');
         });
