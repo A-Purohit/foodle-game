@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodle - Guess the Food!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍕 FOODLE</h1>
+            <p>Guess the food ingredient or dish!</p>
+        </header>
+
+        <div class="game-board">
+            <div class="grid" id="grid"></div>
+        </div>
+
+        <div class="keyboard" id="keyboard"></div>
+
+        <div class="stats" id="stats">
+            <div class="stat">
+                <span class="stat-value" id="games-played">0</span>
+                <span class="stat-label">Played</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="win-percentage">0</span>
+                <span class="stat-label">Win %</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="current-streak">0</span>
+                <span class="stat-label">Current Streak</span>
+            </div>
+        </div>
+
+        <div class="modal" id="modal">
+            <div class="modal-content">
+                <h2 id="modal-title">Game Over!</h2>
+                <p id="modal-message">The word was: <strong id="correct-word"></strong></p>
+                <button id="play-again">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
