@@ -1,12 +1,19 @@
-// Food-related words (5 letters)
+// Food-related words (strictly 5 letters only)
 const FOOD_WORDS = [
     'APPLE', 'BACON', 'BREAD', 'BROTH', 'CANDY', 'CREAM', 'CURRY', 'DONUT',
     'FLOUR', 'GRAPE', 'HONEY', 'LEMON', 'MANGO', 'OLIVE', 'ONION', 'PASTA',
     'PEACH', 'PIZZA', 'SALAD', 'SAUCE', 'SPICE', 'STEAK', 'SUGAR', 'TOAST',
-    'WATER', 'WHEAT', 'BERRY', 'CARROT', 'CELERY', 'CHARD', 'CHILI', 'CACAO',
-    'DATES', 'FRIES', 'GARLIC', 'HERBS', 'JUICE', 'LEEKS', 'MELON', 'PANKO',
-    'QUINOA', 'RADISH', 'SUSHI', 'THYME', 'BASIL', 'CUMIN', 'DILL', 'MINT',
-    'NUTS', 'OATS', 'PEAR', 'PLUM', 'RICE', 'TUNA', 'WRAP', 'YAMS'
+    'WATER', 'WHEAT', 'BERRY', 'CHIPS', 'FRESH', 'FRIED', 'GRILL', 'HERBS',
+    'JUICE', 'LEEKS', 'MELON', 'PANKO', 'RANCH', 'ROAST', 'SALTY', 'SWEET',
+    'TANGY', 'YEAST', 'ZESTY', 'BAGEL', 'BEANS', 'BEETS', 'BREWS', 'CHARD', 
+    'CHILI', 'CRUST', 'DATES', 'DRIED', 'FRIES', 'GRAIN', 'GRAVY', 'GREEN',
+    'MAPLE', 'MINTY', 'NUTTY', 'PEELS', 'PLATE', 'SALTS', 'SEEDS', 'SERVE',
+    'SMOKE', 'SNACK', 'SOUPS', 'SPICY', 'STEAM', 'STOCK', 'SYRUP', 'TABLE',
+    'TASTE', 'TREAT', 'WHISK', 'YOLKS', 'BLEND', 'BRINE', 'BROIL', 'BROWN',
+    'CAKEY', 'CHARD', 'CRISP', 'CRUMB', 'DICED', 'DRINK', 'FEAST', 'FIBER',
+    'FLAKY', 'GLAZE', 'LEAFY', 'LIGHT', 'MOIST', 'PASTA', 'PLAIN', 'PUREE',
+    'SAVORY', 'SHARP', 'SLICE', 'SOLID', 'SPLIT', 'THICK', 'TINGY', 'TOUGH',
+    'TWIST', 'VODKA', 'WAFER', 'WHOLE', 'WINES'
 ];
 
 const KEYBOARD_LAYOUT = [
@@ -44,15 +51,24 @@ class FoodleGame {
         console.log('Game number:', this.gameNumber); // For testing
     }
     
-    initializeDaily() {
-        // Get today's date in UTC to ensure consistency across timezones
+    getTodaysDateString() {
         const today = new Date();
-        const utcDate = new Date(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+        return today.getFullYear() + '-' + 
+               String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+               String(today.getDate()).padStart(2, '0');
+    }
+    
+    initializeDaily() {
+        // Get today's date string in YYYY-MM-DD format (local timezone)
+        const dateString = this.getTodaysDateString();
         
         // Calculate days since a fixed start date (January 1, 2024)
-        const startDate = new Date(2024, 0, 1); // January 1, 2024
-        const timeDiff = utcDate.getTime() - startDate.getTime();
+        const startDate = new Date('2024-01-01');
+        const currentDate = new Date(dateString);
+        const timeDiff = currentDate.getTime() - startDate.getTime();
         this.gameNumber = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+        
+        console.log('Date string:', dateString, 'Game number:', this.gameNumber);
         
         // Check if we already have today's game state saved
         const savedGameState = this.loadTodaysGame();
@@ -82,7 +98,8 @@ class FoodleGame {
     }
     
     loadTodaysGame() {
-        const savedGame = localStorage.getItem('foodle-daily-game');
+        const dateString = this.getTodaysDateString();
+        const savedGame = localStorage.getItem(`foodle-game-${dateString}`);
         if (savedGame) {
             try {
                 return JSON.parse(savedGame);
@@ -94,6 +111,7 @@ class FoodleGame {
     }
     
     saveTodaysGame() {
+        const dateString = this.getTodaysDateString();
         const gameState = {
             gameNumber: this.gameNumber,
             targetWord: this.targetWord,
@@ -103,9 +121,25 @@ class FoodleGame {
             gameWon: this.gameWon,
             guesses: this.guesses,
             keyboardState: this.keyboardState,
-            grid: this.grid
+            grid: this.grid,
+            dateString: dateString
         };
-        localStorage.setItem('foodle-daily-game', JSON.stringify(gameState));
+        localStorage.setItem(`foodle-game-${dateString}`, JSON.stringify(gameState));
+        
+        // Clean up old game states (keep only last 7 days)
+        this.cleanupOldGames();
+    }
+    
+    cleanupOldGames() {
+        const today = new Date();
+        for (let i = 8; i <= 30; i++) {
+            const oldDate = new Date(today);
+            oldDate.setDate(today.getDate() - i);
+            const oldDateString = oldDate.getFullYear() + '-' + 
+                                 String(oldDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                                 String(oldDate.getDate()).padStart(2, '0');
+            localStorage.removeItem(`foodle-game-${oldDateString}`);
+        }
     }
     
     initializeGrid() {
@@ -348,9 +382,14 @@ class FoodleGame {
     }
     
     isValidWord(word) {
-        // For simplicity, allow any 5-letter combination
-        // In a real app, you'd check against a dictionary
-        return word.length === 5 && /^[A-Z]+$/.test(word);
+        // Strictly require 5-letter words only
+        if (word.length !== 5 || !/^[A-Z]+$/.test(word)) {
+            return false;
+        }
+        
+        // For now, allow any 5-letter combination
+        // In a production app, you'd check against a comprehensive dictionary
+        return true;
     }
     
     checkGuess(guess) {
