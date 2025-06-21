@@ -83,6 +83,29 @@ class FoodleGame {
             this.gameWon = savedGameState.gameWon;
             this.guesses = savedGameState.guesses || [];
             this.keyboardState = savedGameState.keyboardState || {};
+            
+            // Double-check if game should be over based on guesses
+            if (!this.gameOver && this.guesses.length > 0) {
+                const lastGuess = this.guesses[this.guesses.length - 1];
+                if (lastGuess === this.targetWord) {
+                    // Won the game
+                    this.gameOver = true;
+                    this.gameWon = true;
+                    this.currentRow = this.guesses.length - 1;
+                    this.currentCol = 5;
+                } else if (this.guesses.length >= 6) {
+                    // Lost the game (used all 6 attempts)
+                    this.gameOver = true;
+                    this.gameWon = false;
+                    this.currentRow = 5;
+                    this.currentCol = 5;
+                }
+                
+                // Save the corrected state
+                if (this.gameOver) {
+                    this.saveTodaysGame();
+                }
+            }
         } else {
             // Start new game for today
             this.targetWord = this.getDailyWord();
