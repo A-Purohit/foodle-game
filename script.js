@@ -16,6 +16,62 @@ const FOOD_WORDS = [
     'CRUSH', 'GRIND', 'KNEAD', 'MINCE', 'BRAZE', 'SAUTE', 'SIEVE', 'STUFF'
 ];
 
+// Cache for validated words to avoid repeated API calls
+const WORD_CACHE = new Map();
+
+// Pre-cache some common 5-letter words to reduce API calls
+const COMMON_WORDS = [
+    'ABOUT', 'AFTER', 'AGAIN', 'ALONE', 'ALONG', 'ANGER', 'ANGRY', 'APART', 'APPLE', 'BASIC',
+    'BEACH', 'BEGIN', 'BEING', 'BLACK', 'BLANK', 'BLOOD', 'BOARD', 'BRAIN', 'BREAD', 'BREAK',
+    'BRING', 'BROWN', 'BUILD', 'CHAIR', 'CHEAP', 'CHECK', 'CHILD', 'CHINA', 'CLAIM', 'CLASS',
+    'CLEAN', 'CLEAR', 'CLIMB', 'CLOCK', 'CLOSE', 'CLOUD', 'COULD', 'COUNT', 'COURT', 'COVER',
+    'CRAZY', 'CREAM', 'CROSS', 'CROWD', 'DAILY', 'DANCE', 'DEATH', 'DEPTH', 'DOUBT', 'DREAM',
+    'DRESS', 'DRINK', 'DRIVE', 'EARLY', 'EARTH', 'EIGHT', 'EMPTY', 'ENEMY', 'ENJOY', 'ENTER',
+    'ENTRY', 'EQUAL', 'ERROR', 'EVENT', 'EVERY', 'EXACT', 'EXIST', 'EXTRA', 'FAITH', 'FALSE',
+    'FIELD', 'FIFTH', 'FIFTY', 'FIGHT', 'FINAL', 'FIRST', 'FIXED', 'FLASH', 'FLOOR', 'FOCUS',
+    'FORCE', 'FORTH', 'FORTY', 'FOUND', 'FRAME', 'FRANK', 'FRESH', 'FRONT', 'FRUIT', 'FUNNY',
+    'GIVEN', 'GLASS', 'GOING', 'GRACE', 'GRADE', 'GRAND', 'GRANT', 'GRASS', 'GRAVE', 'GREAT',
+    'GREEN', 'GROUP', 'GROWN', 'GUARD', 'GUESS', 'GUEST', 'GUIDE', 'HAPPY', 'HEART', 'HEAVY',
+    'HORSE', 'HOTEL', 'HOUSE', 'HUMAN', 'IMAGE', 'INDEX', 'INNER', 'INPUT', 'ISSUE', 'JAPAN',
+    'JOINT', 'JUDGE', 'KNOWN', 'LABEL', 'LARGE', 'LASER', 'LATER', 'LAUGH', 'LAYER', 'LEARN',
+    'LEASE', 'LEAST', 'LEAVE', 'LEGAL', 'LEVEL', 'LIGHT', 'LIMIT', 'LINKS', 'LIVES', 'LOCAL',
+    'LOOSE', 'LOWER', 'LUCKY', 'LUNCH', 'LYING', 'MAGIC', 'MAJOR', 'MAKER', 'MARCH', 'MATCH',
+    'MAYBE', 'MAYOR', 'MEANT', 'MEDIA', 'METAL', 'MIGHT', 'MINOR', 'MINUS', 'MIXED', 'MODEL',
+    'MONEY', 'MONTH', 'MORAL', 'MOTOR', 'MOUNT', 'MOUSE', 'MOUTH', 'MOVED', 'MOVIE', 'MUSIC',
+    'NEEDS', 'NEVER', 'NEWLY', 'NIGHT', 'NOISE', 'NORTH', 'NOTED', 'NOVEL', 'NURSE', 'OCCUR',
+    'OCEAN', 'OFFER', 'OFTEN', 'ORDER', 'OTHER', 'OUGHT', 'PAINT', 'PANEL', 'PAPER', 'PARTY',
+    'PEACE', 'PETER', 'PHASE', 'PHONE', 'PHOTO', 'PIANO', 'PIECE', 'PILOT', 'PITCH', 'PLACE',
+    'PLAIN', 'PLANE', 'PLANT', 'PLATE', 'POINT', 'POUND', 'POWER', 'PRESS', 'PRICE', 'PRIDE',
+    'PRIME', 'PRINT', 'PRIOR', 'PRIZE', 'PROOF', 'PROUD', 'PROVE', 'QUEEN', 'QUICK', 'QUIET',
+    'QUITE', 'RADIO', 'RAISE', 'RANGE', 'RAPID', 'RATIO', 'REACH', 'READY', 'REALM', 'REBEL',
+    'REFER', 'RELAX', 'REPLY', 'RIGHT', 'RIGID', 'RIVAL', 'RIVER', 'ROBIN', 'ROGER', 'ROMAN',
+    'ROUGH', 'ROUND', 'ROUTE', 'ROYAL', 'RURAL', 'SCALE', 'SCENE', 'SCOPE', 'SCORE', 'SENSE',
+    'SERVE', 'SEVEN', 'SHALL', 'SHAPE', 'SHARE', 'SHARP', 'SHEET', 'SHELF', 'SHELL', 'SHIFT',
+    'SHINE', 'SHIRT', 'SHOCK', 'SHOOT', 'SHORT', 'SHOWN', 'SIGHT', 'SILLY', 'SINCE', 'SIXTH',
+    'SIXTY', 'SIZED', 'SKILL', 'SLEEP', 'SLIDE', 'SMALL', 'SMART', 'SMILE', 'SMITH', 'SMOKE',
+    'SNAKE', 'SOLID', 'SOLVE', 'SORRY', 'SOUND', 'SOUTH', 'SPACE', 'SPARE', 'SPEAK', 'SPEED',
+    'SPEND', 'SPENT', 'SPLIT', 'SPOKE', 'SPORT', 'STAFF', 'STAGE', 'STAKE', 'STAND', 'START',
+    'STATE', 'STAYS', 'STEAM', 'STEEL', 'STEEP', 'STEER', 'STERN', 'STICK', 'STILL', 'STOCK',
+    'STONE', 'STOOD', 'STORE', 'STORM', 'STORY', 'STRIP', 'STUCK', 'STUDY', 'STUFF', 'STYLE',
+    'SUGAR', 'SUITE', 'SUPER', 'SWEET', 'SWEPT', 'SWIFT', 'SWING', 'SWISS', 'TABLE', 'TAKEN',
+    'TASTE', 'TAXES', 'TEACH', 'TERMS', 'TERRY', 'TEXAS', 'THANK', 'THEFT', 'THEIR', 'THEME',
+    'THERE', 'THESE', 'THICK', 'THING', 'THINK', 'THIRD', 'THOSE', 'THREE', 'THREW', 'THROW',
+    'THUMB', 'TIGER', 'TIGHT', 'TIMER', 'TIMES', 'TITLE', 'TODAY', 'TOKEN', 'TOPIC', 'TOTAL',
+    'TOUCH', 'TOUGH', 'TOWER', 'TRACK', 'TRADE', 'TRAIL', 'TRAIN', 'TRAIT', 'TREAT', 'TREND',
+    'TRIAL', 'TRIBE', 'TRICK', 'TRIED', 'TRIES', 'TRULY', 'TRUNK', 'TRUST', 'TRUTH', 'TWICE',
+    'TWIST', 'TYLER', 'UNCLE', 'UNDER', 'UNDUE', 'UNION', 'UNITY', 'UNTIL', 'UPPER', 'UPSET',
+    'URBAN', 'USAGE', 'USUAL', 'VALID', 'VALUE', 'VIDEO', 'VIRUS', 'VISIT', 'VITAL', 'VOCAL',
+    'VOICE', 'WASTE', 'WATCH', 'WATER', 'WHEEL', 'WHERE', 'WHICH', 'WHILE', 'WHITE', 'WHOLE',
+    'WHOSE', 'WIDOW', 'WIDTH', 'WITCH', 'WOMAN', 'WOMEN', 'WORLD', 'WORRY', 'WORSE', 'WORST',
+    'WORTH', 'WOULD', 'WRITE', 'WRONG', 'WROTE', 'YIELD', 'YOUNG', 'YOURS', 'YOUTH'
+];
+
+// Pre-populate cache with common words
+COMMON_WORDS.forEach(word => WORD_CACHE.set(word, true));
+
+// Create a Set of our food words for instant validation
+const FOOD_WORDS_SET = new Set(FOOD_WORDS);
+
 const KEYBOARD_LAYOUT = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
@@ -403,7 +459,7 @@ class FoodleGame {
         }
     }
     
-    submitGuess() {
+    async submitGuess() {
         if (this.currentCol !== 5) {
             this.showToast('Not enough letters');
             return;
@@ -411,8 +467,12 @@ class FoodleGame {
         
         const guess = this.grid[this.currentRow].join('');
         
-        if (!this.isValidWord(guess)) {
-            this.showToast('Not a valid food word');
+        // Show loading state while validating
+        this.showToast('Checking word...');
+        
+        const isValid = await this.isValidWord(guess);
+        if (!isValid) {
+            this.showToast('Not in word list');
             this.shakeRow();
             return;
         }
@@ -431,15 +491,37 @@ class FoodleGame {
         }
     }
     
-    isValidWord(word) {
+    async isValidWord(word) {
         // Strictly require 5-letter words only
         if (word.length !== 5 || !/^[A-Z]+$/.test(word)) {
             return false;
         }
         
-        // For now, allow any 5-letter combination
-        // In a production app, you'd check against a comprehensive dictionary
-        return true;
+        // Always accept our curated food words
+        if (FOOD_WORDS_SET.has(word)) {
+            return true;
+        }
+        
+        // Check cache first
+        if (WORD_CACHE.has(word)) {
+            return WORD_CACHE.get(word);
+        }
+        
+        try {
+            // Use Free Dictionary API
+            const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
+            const isValid = response.ok;
+            
+            // Cache the result
+            WORD_CACHE.set(word, isValid);
+            return isValid;
+            
+        } catch (error) {
+            console.log('Dictionary API error:', error);
+            // Fallback: reject unknown words if API fails
+            WORD_CACHE.set(word, false);
+            return false;
+        }
     }
     
     checkGuess(guess) {
@@ -561,12 +643,12 @@ class FoodleGame {
     }
     
     shakeRow() {
-        for (let i = 0; i < 5; i++) {
-            const tile = document.getElementById(`tile-${this.currentRow}-${i}`);
-            tile.style.animation = 'shake 0.5s';
+        const rowElement = document.querySelector(`#board .row:nth-child(${this.currentRow + 1})`);
+        if (rowElement) {
+            rowElement.style.animation = 'shake 0.6s ease-in-out';
             setTimeout(() => {
-                tile.style.animation = '';
-            }, 500);
+                rowElement.style.animation = '';
+            }, 600);
         }
     }
     
@@ -704,8 +786,8 @@ if (!document.querySelector('#shake-style')) {
     style.textContent = `
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
         }
     `;
     document.head.appendChild(style);
