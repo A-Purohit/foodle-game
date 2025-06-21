@@ -102,6 +102,12 @@ class FoodleGame {
         // Show stats modal if game is already completed
         if (this.gameOver) {
             this.disableKeyboard();
+            
+            // Show answer if game was lost
+            if (!this.gameWon) {
+                this.showAnswer();
+            }
+            
             setTimeout(() => {
                 this.updateStatsDisplay();
                 this.showModal('stats-modal');
@@ -466,8 +472,11 @@ class FoodleGame {
         }
         
         const guess = this.grid[this.currentRow].join('');
+        console.log('Validating word:', guess);
         
         const isValid = await this.isValidWord(guess);
+        console.log('Word validation result:', isValid);
+        
         if (!isValid) {
             this.showToast('Please enter a valid English word');
             this.shakeRow();
@@ -592,6 +601,7 @@ class FoodleGame {
                 this.showToast(`Fantastic! 🎉`);
             } else {
                 this.showToast(`The word was ${this.targetWord}`, 5000);
+                this.showAnswer();
             }
             
             // Show stats modal after a short delay
@@ -600,6 +610,25 @@ class FoodleGame {
                 this.showModal('stats-modal');
             }, 2000);
         }, 600);
+    }
+    
+    showAnswer() {
+        const answerDisplay = document.getElementById('answer-display');
+        const answerWord = document.getElementById('answer-word');
+        
+        // Clear any existing letters
+        answerWord.innerHTML = '';
+        
+        // Create letter tiles for the answer
+        for (let letter of this.targetWord) {
+            const letterTile = document.createElement('div');
+            letterTile.className = 'answer-letter';
+            letterTile.textContent = letter;
+            answerWord.appendChild(letterTile);
+        }
+        
+        // Show the answer display
+        answerDisplay.style.display = 'block';
     }
     
     disableKeyboard() {
