@@ -286,7 +286,7 @@ body {
 }
 
 .key[data-state="absent"] {
-    background-color: #787c7e;
+    background-color: #000000;
     color: #ffffff;
 }
 
@@ -1038,7 +1038,7 @@ hr {
     }
     
     .key[data-state="absent"] {
-        background-color: #3a3a3c !important;
+        background-color: #000000 !important;
         color: #ffffff !important;
     }
     
