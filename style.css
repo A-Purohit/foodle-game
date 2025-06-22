@@ -892,7 +892,7 @@ hr {
     }
 }
 
-/* iPhone and Mobile - Wordle-like layout - OVERRIDE ALL PREVIOUS STYLES */
+/* iPhone and Mobile - Fine-tuned Wordle-like layout */
 @media (max-width: 480px) {
     .game-container {
         height: 100vh;
@@ -904,23 +904,23 @@ hr {
     }
     
     .header {
-        height: 50px !important;
-        padding: 0 16px !important;
+        height: 45px !important;
+        padding: 0 12px !important;
         flex-shrink: 0;
         border-bottom: 1px solid #d3d6da;
     }
     
     .title {
-        font-size: 28px !important;
+        font-size: 24px !important;
         font-weight: 700 !important;
     }
     
     .food-emoji {
-        font-size: 24px !important;
+        font-size: 20px !important;
     }
     
     .game-board {
-        padding: 10px 8px;
+        padding: 6px 8px;
         flex: 1;
         display: flex;
         align-items: center;
@@ -929,22 +929,22 @@ hr {
     }
     
     .board-container {
-        max-width: 350px;
+        max-width: 320px;
         width: 100%;
         padding: 0;
     }
     
     .board {
-        gap: 5px;
+        gap: 4px;
         height: auto;
     }
     
     .row {
-        gap: 5px;
+        gap: 4px;
     }
     
     .tile {
-        font-size: 2rem !important;
+        font-size: 1.6rem !important;
         font-weight: bold !important;
         border: 2px solid #d3d6da !important;
         aspect-ratio: 1;
@@ -967,30 +967,30 @@ hr {
     }
     
     .answer-display {
-        padding: 8px;
-        margin: 8px 0;
+        padding: 4px;
+        margin: 4px 0;
         flex-shrink: 0;
     }
     
     .answer-letter {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
     }
     
     .keyboard-container {
-        padding: 0 8px 8px;
+        padding: 0 6px 4px;
         flex-shrink: 0;
     }
     
     .keyboard {
-        max-width: 484px;
+        max-width: 100%;
         margin: 0 auto;
     }
     
     .keyboard-row {
-        gap: 6px;
-        margin-bottom: 8px;
+        gap: 4px;
+        margin-bottom: 6px;
         justify-content: center;
     }
     
@@ -999,17 +999,18 @@ hr {
     }
     
     .key {
-        min-width: 43px !important;
-        height: 58px !important;
-        font-size: 14px !important;
+        min-width: 32px !important;
+        height: 46px !important;
+        font-size: 12px !important;
         font-weight: bold !important;
         padding: 0 !important;
         border-radius: 4px;
     }
     
     .key.one-and-a-half {
-        font-size: 12px;
+        font-size: 10px !important;
         flex: 1.5;
+        min-width: 48px !important;
     }
 }
 
