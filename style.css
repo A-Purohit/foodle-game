@@ -634,7 +634,7 @@ hr {
     background-color: #5d8a56;
 }
 
-/* Mobile responsive design */
+/* Mobile responsive design - ALL MOBILE DEVICES */
 @media (max-width: 480px) {
     body {
         margin: 0;
@@ -892,8 +892,8 @@ hr {
     }
 }
 
-/* iPhone 13 Pro (390x844) and similar devices - Wordle-like layout */
-@media (max-width: 390px) and (max-height: 844px) {
+/* iPhone and Mobile - Wordle-like layout - OVERRIDE ALL PREVIOUS STYLES */
+@media (max-width: 480px) {
     .game-container {
         height: 100vh;
         height: 100dvh;
@@ -904,19 +904,19 @@ hr {
     }
     
     .header {
-        height: 50px;
-        padding: 0 16px;
+        height: 50px !important;
+        padding: 0 16px !important;
         flex-shrink: 0;
         border-bottom: 1px solid #d3d6da;
     }
     
     .title {
-        font-size: 28px;
-        font-weight: 700;
+        font-size: 28px !important;
+        font-weight: 700 !important;
     }
     
     .food-emoji {
-        font-size: 24px;
+        font-size: 24px !important;
     }
     
     .game-board {
@@ -944,9 +944,9 @@ hr {
     }
     
     .tile {
-        font-size: 2rem;
-        font-weight: bold;
-        border: 2px solid #d3d6da;
+        font-size: 2rem !important;
+        font-weight: bold !important;
+        border: 2px solid #d3d6da !important;
         aspect-ratio: 1;
     }
     
@@ -999,11 +999,11 @@ hr {
     }
     
     .key {
-        min-width: 43px;
-        height: 58px;
-        font-size: 14px;
-        font-weight: bold;
-        padding: 0;
+        min-width: 43px !important;
+        height: 58px !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        padding: 0 !important;
         border-radius: 4px;
     }
     
@@ -1013,50 +1013,6 @@ hr {
     }
 }
 
-/* Fallback for other small screens */
-@media (max-width: 390px) and (min-height: 845px) {
-    .header {
-        height: 35px;
-    }
-    
-    .title {
-        font-size: 20px;
-    }
-    
-    .food-emoji {
-        font-size: 18px;
-    }
-    
-    .board-container {
-        max-width: 260px;
-    }
-    
-    .keyboard-row {
-        gap: 1px;
-        margin-bottom: 2px;
-    }
-    
-    .key {
-        min-width: 22px;
-        height: 32px;
-        font-size: 9px;
-    }
-    
-    .key.one-and-a-half {
-        font-size: 7px;
-        min-width: 33px;
-    }
-    
-    .tile {
-        font-size: 1rem;
-    }
-    
-    .answer-letter {
-        width: 22px;
-        height: 22px;
-        font-size: 11px;
-    }
-}
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
