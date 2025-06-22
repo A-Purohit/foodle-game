@@ -761,7 +761,7 @@ hr {
     
     /* Modal fixes for mobile */
     .modal-overlay {
-        padding: 12px;
+        padding: 20px 12px;
         background-color: rgba(255, 255, 255, 0.95);
         position: fixed;
         top: 0;
@@ -776,9 +776,9 @@ hr {
     
     .modal {
         margin: 0;
-        max-height: calc(100vh - 24px);
+        max-height: calc(100vh - 40px);
         max-width: calc(100vw - 24px);
-        height: calc(100vh - 24px);
+        height: calc(100vh - 40px);
         display: flex;
         flex-direction: column;
         border-radius: 8px;
