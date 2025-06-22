@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodle - Guess the Food!</title>
+    <style>
+/* Quick test - Add this to your existing CSS */
+
+/* Fix How to Play Button */
+.how-to-play-btn {
+    background-color: #3498db !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    border-radius: 6px !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important;
+    margin-bottom: 20px !important;
+}
+
+.how-to-play-btn:hover {
+    background-color: #2980b9 !important;
+}
+
+/* Fix Mobile Keyboard */
+@media (max-width: 600px) {
+    .container {
+        padding: 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    .keyboard-row {
+        gap: 2px !important;
+        margin-bottom: 3px !important;
+    }
+    
+    .key {
+        min-width: 22px !important;
+        height: 35px !important;
+        font-size: 10px !important;
+        padding: 0 4px !important;
+    }
+    
+    .key.wide {
+        min-width: 40px !important;
+        font-size: 8px !important;
+    }
+}
+    </style>
+</head>
+<body>
+    <button onclick="alert('Button works!')">Test Button</button>
+    
+    <script>
+        // Test script - Add this to your script.js
+        
+        // Add after the game loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
+            
+            // Test How to Play button
+            const howToPlayBtn = document.getElementById('how-to-play-btn');
+            if (howToPlayBtn) {
+                console.log('How to Play button found');
+                howToPlayBtn.onclick = function() {
+                    alert('How to Play clicked! Modal should open.');
+                    // Your modal code here
+                };
+            } else {
+                console.log('How to Play button NOT found');
+            }
+        });
+    </script>
+</body>
+</html>
