@@ -581,6 +581,9 @@ class FoodleGame {
                     
                     this.keyboardState[guessArray[i]] = result[i];
                     key.setAttribute('data-state', result[i]);
+                    
+                    // Debug logging
+                    console.log(`Updated key ${guessArray[i]} to state: ${result[i]}`);
                 }
                 
                 // Remove animation after it completes
