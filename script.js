@@ -569,11 +569,15 @@ class FoodleGame {
                 tile.setAttribute('data-state', result[i]);
                 tile.setAttribute('data-animation', 'flip-in');
                 
-                // Update keyboard colors (only if better than current state)
+                // Update keyboard colors (with proper priority logic)
                 const currentKeyState = this.keyboardState[guessArray[i]];
+                
+                // Priority: correct > present > absent
+                // Only update if: no current state, OR new state is better, OR new state is absent and no current state
                 if (!currentKeyState || 
                     (result[i] === 'correct') ||
-                    (result[i] === 'present' && currentKeyState !== 'correct')) {
+                    (result[i] === 'present' && currentKeyState !== 'correct') ||
+                    (result[i] === 'absent' && !currentKeyState)) {
                     
                     this.keyboardState[guessArray[i]] = result[i];
                     key.setAttribute('data-state', result[i]);
