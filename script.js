@@ -277,13 +277,13 @@ class FoodleGame {
                         this.grid[row][col] = letter;
                         
                         // Set tile state based on whether this row was submitted
-                        if (row < this.currentRow) {
+                        if (row < this.currentRow || (row === this.currentRow && this.gameOver)) {
                             // This row was already submitted, check the guess result
                             const guess = savedGameState.grid[row].join('');
                             const result = this.calculateGuessResult(guess, this.targetWord);
                             tile.setAttribute('data-state', result[col]);
-                        } else if (row === this.currentRow && col < this.currentCol) {
-                            // Current row, letters that have been typed
+                        } else if (row === this.currentRow && col < this.currentCol && !this.gameOver) {
+                            // Current row, letters that have been typed (but game not over)
                             tile.setAttribute('data-state', 'tbd');
                         }
                     }
@@ -295,6 +295,16 @@ class FoodleGame {
                 const key = document.querySelector(`[data-key="${letter}"]`);
                 if (key) {
                     key.setAttribute('data-state', state);
+                }
+            }
+            
+            // If game is over, handle end game state restoration
+            if (this.gameOver) {
+                this.disableKeyboard();
+                
+                // If game was lost, show the answer
+                if (!this.gameWon) {
+                    this.showAnswer();
                 }
             }
         }
