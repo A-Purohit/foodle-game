@@ -640,6 +640,14 @@ hr {
         margin: 0;
         padding: 0;
         overflow-x: hidden;
+        /* Prevent zoom on double-tap */
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
     
     .game-container {
@@ -968,6 +976,11 @@ hr {
         font-weight: bold !important;
         border: 2px solid #d3d6da !important;
         aspect-ratio: 1;
+        /* Prevent zoom on double-tap */
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
     }
     
     .tile[data-state="tbd"] {
@@ -1025,6 +1038,11 @@ hr {
         font-weight: bold !important;
         padding: 0 !important;
         border-radius: 4px;
+        /* Prevent zoom on double-tap */
+        touch-action: manipulation;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
     }
     
     .key[data-state="correct"] {
