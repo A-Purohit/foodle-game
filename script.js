@@ -97,6 +97,7 @@ class FoodleGame {
         this.initializeKeyboard();
         this.loadStats();
         this.bindEvents();
+        this.preventZoom();
         this.updateCountdown();
         
         // Show stats modal if game is already completed
@@ -408,6 +409,35 @@ class FoodleGame {
                     this.hideModal(modalId);
                 }
             });
+        });
+    }
+    
+    preventZoom() {
+        // Prevent double-tap zoom on mobile
+        let lastTouchEnd = 0;
+        
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+        
+        // Additional prevention for specific elements
+        const preventZoomElements = document.querySelectorAll('.key, .tile, .game-board');
+        preventZoomElements.forEach(element => {
+            element.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+            
+            element.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                // Trigger click for functionality
+                if (element.classList.contains('key')) {
+                    element.click();
+                }
+            }, { passive: false });
         });
     }
     
